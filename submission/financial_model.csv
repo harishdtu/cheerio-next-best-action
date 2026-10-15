@@ -1,0 +1,188 @@
+﻿Section,Item,Unit,Conservative,Base,Optimistic,Note
+Assumption,Active businesses,businesses,5000,5000,5000,Supplied (assignment): Given in the assignment brief.
+Assumption,"Share of active businesses that are eligible (send campaigns, no automation yet)",% of active,0.3,0.4,0.5,Hypothesis: Unknown. Must be measured from Cheerio's product events.
+Assumption,Eligible businesses exposed to a recommendation in the month,% of eligible,0.7,0.8,0.9,Hypothesis: Depends on login frequency. Measure.
+Assumption,Recurring rollout only: newly eligible businesses per month,% of active per month,0.015,0.02,0.03,Hypothesis: Illustrative placeholder; Cheerio's real inflow is unknown. Each month this share of active businesses becomes eligible and the exposure rate applies.
+Assumption,Recommendation impressions per exposed business per month,impressions,2.5,2.5,2.5,Hypothesis: Capped by suppression rules (max 1 shown at a time).
+Assumption,Click rate,% of exposed,0.25,0.3,0.35,"Hypothesis: Base set near the prototype's synthetic funnel, which is itself illustrative."
+Assumption,Setup start rate,% of clicks,0.6,0.68,0.72,Hypothesis: As above.
+Assumption,Setup completion (activation) rate,% of starts,0.55,0.63,0.7,Hypothesis: As above.
+Assumption,"Activation rate in control group (no recommendation, same period)",% of exposed-equivalent,0.06,0.05,0.04,Hypothesis: Organic adoption. Must come from a holdout. Conservative = higher control.
+Assumption,"Monthly churn, control group",% per month,0.05,0.05,0.05,Illustrative placeholder: Placeholder. Replace with measured churn.
+Assumption,Monthly churn of accounts that activate BECAUSE of the recommendation (incremental activators),% per month,0.04,0.035,0.03,"Hypothesis: Placeholder hypothesis. Compared with control churn above. Retention benefit applies ONLY to incremental activators, so weaker activation automatically means weaker retention."
+Assumption,Months from exposure to activation before any retention benefit starts,months,1,1,1,Hypothesis: Placeholder. Activation is not instant.
+Assumption,Evaluation horizon,months,12,12,12,Illustrative placeholder: Evaluation window used for BOTH cohort scenarios (maximum 24 in this workbook).
+Assumption,Average monthly plan price,INR / account / month,2500,2500,2500,Illustrative placeholder: Placeholder. Cheerio's real average plan price is not known.
+Assumption,Gross margin on plan revenue (serving cost excluded from this model otherwise),% of plan revenue,0.85,0.85,0.85,Illustrative placeholder: Placeholder.
+Assumption,Hosting,INR / month,6000,6000,6000,Illustrative placeholder: Placeholder.
+Assumption,Analytics and experimentation tooling,INR / month,4000,4000,4000,Illustrative placeholder: Placeholder.
+Assumption,Development and maintenance allocation,INR / month,25000,25000,25000,Illustrative placeholder: Placeholder allocation of team time.
+Assumption,Other operating expenses,INR / month,2000,2000,2000,Illustrative placeholder: Placeholder.
+Assumption,"AI layer enabled? (1 = yes, 0 = no)",flag,0,0,0,Supplied (assignment): MVP decision: deterministic rules. Set 1 to see token cost.
+Assumption,Share of impressions that make a model call,% of impressions,1,1,1,Illustrative placeholder: Only used if AI layer is on.
+Assumption,Input tokens per AI-assisted recommendation,tokens,1200,1200,1200,Illustrative placeholder: Placeholder.
+Assumption,Output tokens per AI-assisted recommendation,tokens,250,250,250,Illustrative placeholder: Placeholder.
+Assumption,Input token price,USD per 1M tokens,3,3,3,External benchmark: verify: UNVERIFIED placeholder. Source: not checked. Access date: not verified. Verify with provider pricing page.
+Assumption,Output token price,USD per 1M tokens,15,15,15,External benchmark: verify: UNVERIFIED placeholder. Source: not checked. Access date: not verified.
+Assumption,Exchange rate,INR per USD,85,85,85,External benchmark: verify: UNVERIFIED placeholder. Use the rate on the date you verify prices.
+Assumption,Share of eligible businesses already on the higher plan,% of eligible,0.2,0.2,0.2,Hypothesis: Option B gates discovery to these accounts.
+Assumption,Upgrade rate among eligible accounts not on the higher plan,% of eligible per cohort,0.015,0.015,0.015,"Hypothesis: Share converting once per exposure cohort; assumed fully incremental (no cannibalisation), which favours B."
+Assumption,Higher-plan price uplift,INR / account / month,1000,1000,1000,Illustrative placeholder: Placeholder.
+Assumption,Paid add-on price,INR / account / month,499,499,499,Illustrative placeholder: Placeholder.
+Assumption,Add-on take rate among exposed businesses,% of exposed,0.03,0.03,0.03,Hypothesis: Option C direct revenue.
+Assumption,Share of the free-version retention effect that survives a paywall,% of free effect,0.4,0.4,0.4,Hypothesis: Friction assumption. A paywall on discovery reduces who adopts.
+Assumption,Payment/billing fee on direct revenue,% of direct revenue,0.02,0.02,0.02,Illustrative placeholder: Placeholder.
+Assumption,Target gross margin threshold (proposed operating setting),%,0.7,0.7,0.7,Illustrative placeholder: Proposed alert threshold.
+Assumption,Extra one-time billing/entitlement build cost for Options B and C,INR,0,0,0,Illustrative placeholder: Default 0 keeps the cost basis identical across options. Not modelled; raise it to test.
+Output: launch-cohort funnel,Eligible businesses,businesses,1500,2000,2500,active x eligible share
+Output: launch-cohort funnel,Businesses exposed to a recommendation,businesses,1050,1600,2250,eligible x exposure rate
+Output: launch-cohort funnel,Recommendation impressions,impressions,2625,4000,5625,exposed x impressions per business
+Output: launch-cohort funnel,Businesses clicking a recommendation,businesses,262.5,480,787.5,exposed x click rate
+Output: launch-cohort funnel,Setup starts,businesses,157.5,326.4,567,clicks x start rate
+Output: launch-cohort funnel,Successful activations (treatment),businesses,86.625,205.632,396.9,starts x completion rate
+Output: launch-cohort funnel,End-to-end activation rate among exposed,% of exposed,0.0825,0.1285,0.1764,activations / exposed
+Output: launch-cohort funnel,Expected activations in control (same exposed count),businesses,63,80,90,exposed x control activation rate
+Output: launch-cohort funnel,Incremental activations vs control,businesses,23.625,125.632,306.9,treatment - control
+Output: launch-cohort funnel,Incremental share of treatment activations,%,0.2727,0.611,0.7732,incremental / treatment activations
+Output: launch-cohort funnel,Relative lift in activation vs control,%,0.375,1.5704,3.41,treatment / control - 1
+Output: cost (launch month),Hosting,INR / month,6000,6000,6000,fixed
+Output: cost (launch month),Analytics and experimentation tooling,INR / month,4000,4000,4000,fixed
+Output: cost (launch month),Development and maintenance allocation,INR / month,25000,25000,25000,fixed (allocation)
+Output: cost (launch month),Other operating expenses,INR / month,2000,2000,2000,fixed
+Output: cost (launch month),Total fixed cost,INR / month,37000,37000,37000,sum
+Output: cost (launch month),Token cost per AI-assisted recommendation,INR / call,0.6248,0.6248,0.6248,(in/1M x in price + out/1M x out price) x FX. Prices unverified.
+Output: cost (launch month),AI calls in the launch month,calls,0,0,0,impressions x AI share x AI flag
+Output: cost (launch month),Variable AI token cost,INR / month,0,0,0,cost per call x calls
+Output: cost (launch month),Launch-month operating cost (fixed + AI at launch-month impressions),INR / month,37000,37000,37000,fixed + variable
+Output: cost (launch month),Launch-month cost per eligible business,INR / eligible,24.6667,18.5,14.8,total / eligible
+Output: cost (launch month),Launch-month cost per exposed business,INR / exposed,35.2381,23.125,16.4444,total / exposed
+Output: cost (launch month),Launch-month cost per successful activation,INR / activation,427.1284,179.9331,93.2225,total / treatment activations
+Output: cost (launch month),Launch-month cost per incremental activation,INR / activation,1566.1376,294.511,120.5604,total / incremental activations (0 if none)
+Output: cost (launch month),Fixed share of total cost,%,1,1,1,fixed / total
+Output: cost (launch month),Variable share of total cost,%,0,0,0,variable / total
+Output: common drivers,Incremental activation rate (treatment minus control),% of exposed,0.0225,0.0785,0.1364,end-to-end activation - control activation
+Output: common drivers,"Monthly churn, control",% per month,0.05,0.05,0.05,assumption
+Output: common drivers,"Monthly churn, incremental activators",% per month,0.04,0.035,0.03,assumption
+Output: common drivers,Churn reduction for an incremental activator,pp per month,0.01,0.015,0.02,control - activator
+Output: common drivers,Activation lag before benefit,months,1,1,1,assumption
+Output: common drivers,Horizon,months,12,12,12,assumption
+Output: common drivers,Average monthly plan price,INR / account / month,2500,2500,2500,placeholder
+Output: common drivers,Gross margin on plan revenue,%,0.85,0.85,0.85,placeholder
+Output: common drivers,Expected treatment-minus-holdout survival gap at horizon end (launch cohort),percentage points,0.0016,0.0084,0.02,what a holdout would need to detect; small gaps need large samples
+Output: common drivers,Monthly plan revenue of the existing base (context only; NOT credited to the programme),INR / month,12500000,12500000,12500000,active x price
+Output: Scenario 1 single cohort,Exposed accounts (launch cohort),accounts,1050,1600,2250,Cohort engine
+Output: Scenario 1 single cohort,Incremental activations,accounts,23.625,125.632,306.9,exposed x incremental rate
+Output: Scenario 1 single cohort,Incremental retained account-months,account-months,11.5634,93.7994,310.7229,rate x sum of size x (activator - control months)
+Output: Scenario 1 single cohort,Incremental plan revenue,INR,28908.6025,234498.4151,776807.1627,account-months x price
+Output: Scenario 1 single cohort,Gross profit on incremental revenue,INR,24572.3121,199323.6529,660286.0883,revenue x gross margin
+Output: Scenario 1 single cohort,Programme cost over horizon,INR,444000,444000,444000,fixed x H + AI token cost on cohort impressions (0 while AI is off)
+Output: Scenario 1 single cohort,Net contribution over horizon,INR,-419427.6879,-244676.3471,216286.0883,gross profit - programme cost
+Output: Scenario 1 single cohort,Average net contribution per month,INR / month,-34952.3073,-20389.6956,18023.8407,net / H
+Output: Scenario 1 single cohort,ROI on programme cost,%,-0.9447,-0.5511,0.4871,net contribution / programme cost
+Output: Scenario 1 single cohort,Break-even incremental account-months,account-months,208.9412,208.9412,208.9412,cost / (price x gross margin)
+Output: Scenario 1 single cohort,Modelled account-months as a multiple of break-even,x,0.0553,0.4489,1.4871,>=1.00x pays back
+Output: Scenario 1 single cohort,Programme cost per incremental retained account-month,INR,38396.8751,4733.5075,1428.9261,cost / incremental account-months (compare with price x margin)
+Output: Scenario 2 recurring rollout,Launch cohort exposed,accounts,1050,1600,2250,Cohort engine
+Output: Scenario 2 recurring rollout,New cohort exposed each month after launch,accounts / month,52.5,80,135,active x newly eligible share x exposure rate
+Output: Scenario 2 recurring rollout,Total exposed accounts over the horizon,accounts,1627.5,2480,3735,Cohort engine
+Output: Scenario 2 recurring rollout,Incremental activations,accounts,36.6187,194.7296,509.454,exposed x incremental rate
+Output: Scenario 2 recurring rollout,Incremental retained account-months (within horizon),account-months,13.6892,110.9464,378.5013,later cohorts have fewer months left in the window
+Output: Scenario 2 recurring rollout,Incremental plan revenue,INR,34222.9378,277366.0764,946253.2734,account-months x price
+Output: Scenario 2 recurring rollout,Gross profit on incremental revenue,INR,29089.4971,235761.1649,804315.2824,revenue x gross margin
+Output: Scenario 2 recurring rollout,Programme cost over horizon,INR,444000,444000,444000,fixed x H + AI token cost on all cohort impressions
+Output: Scenario 2 recurring rollout,Net contribution over horizon,INR,-414910.5029,-208238.8351,360315.2824,gross profit - programme cost
+Output: Scenario 2 recurring rollout,Average net contribution per month,INR / month,-34575.8752,-17353.2363,30026.2735,net / H
+Output: Scenario 2 recurring rollout,ROI on programme cost,%,-0.9345,-0.469,0.8115,net contribution / programme cost
+Output: Scenario 2 recurring rollout,Break-even incremental account-months,account-months,208.9412,208.9412,208.9412,cost / (price x gross margin)
+Output: Scenario 2 recurring rollout,Modelled account-months as a multiple of break-even,x,0.0655,0.531,1.8115,>=1.00x pays back
+Output: Scenario 2 recurring rollout,Programme cost per incremental retained account-month,INR,32434.3868,4001.9314,1173.0475,cost / incremental account-months
+"Output: pricing, Scenario 1 (cols = options A/B/C)",Plan revenue from the retention effect,INR,234498.4151,46899.683,93799.366,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",Billed account-months of the paid feature,account-months,0,209.5958,419.1916,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",Direct revenue from the paid feature,INR,0,209595.8,209176.6084,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",Total attributable revenue,INR,234498.4151,256495.4831,302975.9745,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",Variable: payment/billing fees,INR,0,4191.916,4183.5322,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",Variable: serving cost of revenue,INR,35174.7623,38474.3225,45446.3962,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",Variable: AI token cost,INR,0,0,0,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",Gross profit,INR,199323.6529,213829.2446,253346.0461,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",Gross margin,% of revenue,0.85,0.8337,0.8362,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",Fixed programme cost over horizon,INR,444000,444000,444000,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",One-time billing/entitlement build cost,INR,0,0,0,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",Operating contribution over horizon,INR,-244676.3471,-230170.7554,-190653.9539,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",ROI on total programme cost,%,-0.5511,-0.5184,-0.4294,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",Highest modelled operating contribution,,C: Paid add-on,,,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 1 (cols = options A/B/C)",Best option minus Option A (INR over horizon),,54022.3933,,,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",Plan revenue from the retention effect,INR,277366.0764,55473.2153,110946.4305,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",Billed account-months of the paid feature,account-months,0,273.6,547.2,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",Direct revenue from the paid feature,INR,0,273600,273052.8,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",Total attributable revenue,INR,277366.0764,329073.2153,383999.2305,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",Variable: payment/billing fees,INR,0,5472,5461.056,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",Variable: serving cost of revenue,INR,41604.9115,49360.9823,57599.8846,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",Variable: AI token cost,INR,0,0,0,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",Gross profit,INR,235761.1649,274240.233,320938.29,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",Gross margin,% of revenue,0.85,0.8334,0.8358,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",Fixed programme cost over horizon,INR,444000,444000,444000,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",One-time billing/entitlement build cost,INR,0,0,0,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",Operating contribution over horizon,INR,-208238.8351,-169759.767,-123061.71,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",ROI on total programme cost,%,-0.469,-0.3823,-0.2772,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",Highest modelled operating contribution,,C: Paid add-on,,,"Columns are pricing options, not scenarios"
+"Output: pricing, Scenario 2 (cols = options A/B/C)",Best option minus Option A (INR over horizon),,85177.125,,,"Columns are pricing options, not scenarios"
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 3.00%, end-to-end activation conversion 15.00%",ROI,,,-0.2247,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 3.00%, end-to-end activation conversion 12.85%",ROI,,,-0.3912,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 3.00%, end-to-end activation conversion 10.00%",ROI,,,-0.6123,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 3.00%, end-to-end activation conversion 8.00%",ROI,,,-0.7674,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 3.00%, end-to-end activation conversion 6.00%",ROI,,,-0.9225,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 3.00%, end-to-end activation conversion 5.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 3.50%, end-to-end activation conversion 15.00%",ROI,,,-0.4283,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 3.50%, end-to-end activation conversion 12.85%",ROI,,,-0.5511,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 3.50%, end-to-end activation conversion 10.00%",ROI,,,-0.7141,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 3.50%, end-to-end activation conversion 8.00%",ROI,,,-0.8285,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 3.50%, end-to-end activation conversion 6.00%",ROI,,,-0.9428,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 3.50%, end-to-end activation conversion 5.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 4.00%, end-to-end activation conversion 15.00%",ROI,,,-0.6252,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 4.00%, end-to-end activation conversion 12.85%",ROI,,,-0.7057,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 4.00%, end-to-end activation conversion 10.00%",ROI,,,-0.8126,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 4.00%, end-to-end activation conversion 8.00%",ROI,,,-0.8876,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 4.00%, end-to-end activation conversion 6.00%",ROI,,,-0.9625,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 4.00%, end-to-end activation conversion 5.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 4.50%, end-to-end activation conversion 15.00%",ROI,,,-0.8157,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 4.50%, end-to-end activation conversion 12.85%",ROI,,,-0.8553,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 4.50%, end-to-end activation conversion 10.00%",ROI,,,-0.9078,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 4.50%, end-to-end activation conversion 8.00%",ROI,,,-0.9447,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 4.50%, end-to-end activation conversion 6.00%",ROI,,,-0.9816,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 4.50%, end-to-end activation conversion 5.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 5.00%, end-to-end activation conversion 15.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 5.00%, end-to-end activation conversion 12.85%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 5.00%, end-to-end activation conversion 10.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 5.00%, end-to-end activation conversion 8.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 5.00%, end-to-end activation conversion 6.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 1 (single cohort)","churn of incremental activators 5.00%, end-to-end activation conversion 5.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 3.00%, end-to-end activation conversion 15.00%",ROI,,,-0.0838,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 3.00%, end-to-end activation conversion 12.85%",ROI,,,-0.2806,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 3.00%, end-to-end activation conversion 10.00%",ROI,,,-0.5419,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 3.00%, end-to-end activation conversion 8.00%",ROI,,,-0.7251,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 3.00%, end-to-end activation conversion 6.00%",ROI,,,-0.9084,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 3.00%, end-to-end activation conversion 5.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 3.50%, end-to-end activation conversion 15.00%",ROI,,,-0.3237,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 3.50%, end-to-end activation conversion 12.85%",ROI,,,-0.469,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 3.50%, end-to-end activation conversion 10.00%",ROI,,,-0.6619,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 3.50%, end-to-end activation conversion 8.00%",ROI,,,-0.7971,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 3.50%, end-to-end activation conversion 6.00%",ROI,,,-0.9324,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 3.50%, end-to-end activation conversion 5.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 4.00%, end-to-end activation conversion 15.00%",ROI,,,-0.5563,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 4.00%, end-to-end activation conversion 12.85%",ROI,,,-0.6516,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 4.00%, end-to-end activation conversion 10.00%",ROI,,,-0.7781,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 4.00%, end-to-end activation conversion 8.00%",ROI,,,-0.8669,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 4.00%, end-to-end activation conversion 6.00%",ROI,,,-0.9556,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 4.00%, end-to-end activation conversion 5.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 4.50%, end-to-end activation conversion 15.00%",ROI,,,-0.7816,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 4.50%, end-to-end activation conversion 12.85%",ROI,,,-0.8285,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 4.50%, end-to-end activation conversion 10.00%",ROI,,,-0.8908,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 4.50%, end-to-end activation conversion 8.00%",ROI,,,-0.9345,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 4.50%, end-to-end activation conversion 6.00%",ROI,,,-0.9782,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 4.50%, end-to-end activation conversion 5.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 5.00%, end-to-end activation conversion 15.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 5.00%, end-to-end activation conversion 12.85%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 5.00%, end-to-end activation conversion 10.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 5.00%, end-to-end activation conversion 8.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 5.00%, end-to-end activation conversion 6.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
+"Sensitivity: ROI, Scenario 2 (recurring rollout)","churn of incremental activators 5.00%, end-to-end activation conversion 5.00%",ROI,,,-1,Base scenario; ROI over the horizon (value in the Optimistic column slot is the ROI for this pair)
