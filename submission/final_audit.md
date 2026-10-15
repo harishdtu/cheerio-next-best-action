@@ -1,96 +1,120 @@
 # Final submission audit
 
-**Audit date:** 13 October 2026 (IST)  
-**Status:** Local package is not ready to submit. The source project and deliverables are present, but runtime checks could not run without dependencies. Public links, genuine AI evidence, a Loom, and final submission still require Harish's actions.
+**Audit date:** 14 October 2026 (IST)
+**Current status (15 October 2026):** reported local checks pass and overall manual Chrome QA is reported passed. Individual manual checks, final rendered deliverables, external publication, and submission remain outstanding. No deployment or external publication was made. Earlier entries below are historical; the 15 October readiness update supersedes stale statuses.
 
-## Deliverables and current status
+## Security remediation
 
-| Deliverable | Status |
-|---|---|
-| Next.js prototype (`app/`, `components/`, `lib/`) | Present. Source describes a simulated local prototype; no real messaging or activation. Runtime QA is pending because dependencies are absent. |
-| `solution.md` | Present; includes target hypothesis, alternatives, selected features, journey, safeguards, three primary metrics, North Star, causal measurement plan, 90-day plan, and illustrative financial case. Existing document states it rendered to four A4 pages previously; this audit could not reproduce that render. |
-| `financial_model.xlsx` | Present; seven sheets and 884 formulas. Structural and cached-value review below. No workbook edits made. |
-| `financial_model.csv` | Present as a flattened export; selected Base and scenario outputs reconcile to workbook values at the CSV's displayed precision. |
-| `assumptions_and_limitations.md` | Present; correctly labels model inputs as illustrative and documents limitations. Some verification statements describe an earlier pass and were not independently reproduced here. |
-| `ai_usage_log.md` | Present as an honest evidence template. It says no prompt runs or evidence have been recorded; mandatory evidence remains incomplete. |
-| `prototype_walkthrough.md` | Present with click paths, screenshot descriptions, Loom script, and publishing steps. The document says no public URL exists. |
-| Screenshots | Eight PNG files present. Their existence is confirmed; capture provenance and current correspondence to the app were not verified in this pass. |
-| `final_submission_checklist.md` | Created in this audit. |
-| Git repository | No `.git` directory in the supplied project folder; Git status and history cannot be inspected here. No repository was initialized. |
+The project started with Next.js **14.2.15**, React **18.x**, Node.js **v24.16.0**, and npm **11.5.1**. Next 14.2.15 is outside the patched releases for multiple current Next.js advisories. The 14.x line also lacks the PostCSS fix found by npm audit.
 
-## Financial model audit
+I checked the supplied [December 2025 Next.js update](https://nextjs.org/blog/security-update-2025-12-11), the [Windows-hosted server advisory GHSA-p293-qw3h-jr36](https://github.com/vercel/next.js/security/advisories/GHSA-p293-qw3h-jr36), the [AVIF image optimization advisory GHSA-2xp9-vwfh-vxw4](https://github.com/vercel/next.js/security/advisories/GHSA-2xp9-vwfh-vxw4), and the current npm audit database. I also checked the [Next.js advisory list](https://github.com/vercel/next.js/security/advisories) and the [September 2026 cache-poisoning advisory](https://github.com/advisories/GHSA-4jqv-mc3x-m676).
 
-### Checks completed
+Next.js 15.5.27 was first installed as the smallest maintained patched release line. `npm audit` then found production vulnerabilities in that Next.js release's bundled PostCSS dependency; npm identified Next.js 16.4.1 as the available fix. I upgraded to **Next.js 16.4.1**, matching `eslint-config-next` 16.4.1, and ESLint 9. The installed Next.js 16.4.1 accepts this project's React 18 peer versions and Node 24 satisfies its Node `>=20.9.0` requirement. This is a major-version change, made only after npm audit showed the patched fix available there.
 
-- Opened the workbook with Python `openpyxl`; found seven sheets: README, Assumptions, Adoption funnel, Cost model, Cohort engine, Revenue and business case, Billing and audit.
-- Counted 884 formula cells and found no cached Excel error cells. Formula cells have cached results, but a cache is not proof that the formulas recalculate correctly.
-- Reviewed key cross-sheet formulas and workbook scenario labels. Both views use a 12-month horizon and ₹37,000/month fixed operating allocation (₹444,000 over the horizon). The single-cohort case includes only the initial cohort; recurring rollout adds later cohorts and retains the same fixed-cost basis.
-- The cohort engine includes each cohort's remaining months and a one-month activation lag. The business case credits retention only to treatment-versus-control incremental activations and sums retained account-months; it does not multiply retained customers by the horizon as if every customer were present for all 12 months.
-- Independently recomputed the Base case from the workbook's assumptions: eligible/exposed launch cohort = 5,000 × 40% × 80% = 1,600 accounts; treatment activation rate = 30% × 68% × 63% = 12.852%; control activation = 5%; incremental activations = 125.632. Summing the month-by-month difference in survival at 3.5% versus 5% monthly churn after the one-month lag gives 93.799 incremental retained account-months and −55.107% ROI.
-- Independently recomputed recurring Base using the 2% monthly new-eligibility assumption: 110.946 incremental retained account-months and −46.901% ROI. The formula is `(incremental retained account-months × ₹2,500 × 85% gross margin − ₹444,000) / ₹444,000`.
-- Break-even is ₹444,000 / (₹2,500 × 85%) = 208.94 incremental retained account-months. The Base scenarios therefore do not break even on fully loaded allocated cost.
-- Both sensitivity-grid base-cell check cells in the workbook cache display `OK`.
-- Reconciled the CSV's fixed monthly cost, retained account-months, 12-month programme costs, and Conservative/Base/Optimistic ROI outputs for both scenarios to the workbook's cached outputs (rounded to the CSV's displayed precision).
-- Fully loaded fixed cost reconciles to ₹6,000 hosting + ₹4,000 analytics/experimentation + ₹25,000 development/maintenance allocation + ₹2,000 other = ₹37,000/month. The ₹25,000 is an allocation, not evidence of incremental cash spend.
-- The business case treats retention differences as assumptions, not established causal results. A randomized holdout is still needed to estimate incremental activation and retention impact.
+The Next.js 16 change removes `next lint`. I changed the lint script to run ESLint directly, added the flat ESLint config, and removed the obsolete `.eslintrc.json`. ESLint then identified a synchronous state update in the impression-tracking effect. I changed its per-session seen-ID tracker to a ref and preserved the existing reset behavior.
 
-### Not independently verified / limitations
+### Current npm audit results
 
-- All scenario output columns and selected CSV outputs reconcile; billing break-even formulas and every sensitivity cell were not independently recalculated in this pass.
-- Formula text and sheet references were sampled, not exhaustively parsed. `openpyxl` does not calculate formulas. Cached values alone cannot validate formula integrity or behavior after conversion to Google Sheets.
-- Billing options use the same horizon and fixed-cost basis in workbook labels, but their direct-revenue assumptions (upgrade/add-on take rates, no cannibalization, and zero build/support costs) remain illustrative and favor paid options.
-- An incremental cash-cost view cannot be responsibly calculated from current evidence. Hosting, tooling, and other costs may or may not be avoidable; the workbook does not establish which expenses are genuinely incremental. Keep the fully loaded view primary and do not call allocations actual cash spending.
-- Token prices and FX inputs are explicitly unverified. The AI cost is zero only because the optional AI layer is off.
+| Command | Result | Interpretation |
+|---|---|---|
+| `npm audit` | **FAIL**, exit 1; 9 findings: 7 high, 2 moderate, 0 critical | All remaining findings are in development dependencies: Tailwind CSS 3's transitive watcher/parser packages, plus the Next ESLint plugin's glob/micromatch chain. npm's blanket fix proposes Tailwind CSS 4.3.3, a breaking styling migration; that unrelated migration was not applied. |
+| `npm audit --omit=dev` | **PASS**, exit 0; 0 vulnerabilities | No production dependency findings were reported after the Next.js 16.4.1 update. |
 
-### What must be true to break even
+The first audit on Next.js 15.5.27 exited 1 with 11 findings (8 high, 3 moderate), including production PostCSS advisories. That result is why 15.5.27 was not retained. An ordinary sandboxed audit request initially failed to reach the registry; the audit findings above came from the successful network-enabled npm audit.
 
-With the current illustrative 12-month inputs and fully loaded cost, the project needs at least 208.94 incremental retained account-months (about 2.23× the Base single-cohort result or 1.88× the recurring result). That requires a measured combination of sufficient eligible/exposed accounts, incremental activation lift, and a durable retention difference that yields that many account-months, while keeping total cost at or below ₹444,000. These are conditions from the model, not a forecast or a causal claim.
+The official Next.js team [announced a separate upstream-dependency security update for 14 October 2026](https://nextjs.org/blog/upcoming-nextjs-security-update-october-2026), covering two Critical and one High issue. At the time of this audit the official page still described it as upcoming. Re-run `npm audit` after the official release is published and review its patched-version guidance before any deployment. Do not deploy while that release remains unchecked.
 
-## Prototype and document QA
+Next.js 16.4 reports that React 18 support is deprecated and will be removed in Next.js 17. The current build succeeds with React 18; moving to React 19 is not needed to resolve the audit findings reported here.
 
-- Source and package metadata were inspected. `node_modules` is absent, so the app could not be started for the requested interactive, mobile, keyboard, link, console, and browser checks.
-- `npm.cmd ci` was attempted but npm failed with `Exit handler never called!`; npm also could not write its log to the user cache. The incomplete `node_modules` directory created by that attempt was removed after verifying it was inside this workspace and had not existed before.
-- `npm.cmd run lint` and `npm.cmd run build` were attempted; both stopped because `next` is not installed. `npm.ps1` is also blocked by the current PowerShell execution policy, so use `npm.cmd` in these instructions.
-- Type-check, existing tests, browser smoke tests, and document page-count checks were not run. No existing test script is declared in `package.json`.
-- No new screenshots were made and no unsupported prototype behavior was claimed.
-- README already lists setup (`npm install`), development, lint, type-check (`npx tsc --noEmit`), and production build commands. Clean-checkout behavior remains unverified because dependencies could not be installed and this folder has no Git metadata.
+## Build and local runtime checks
 
-## Git, security, and publishing readiness
+| Check | Result | Evidence |
+|---|---|---|
+| Dependency install, `npm install next@15.5.27 eslint-config-next@15.5.27` | **PASS**, exit 0 | Lockfile regenerated; this intermediate version was superseded after the audit found its production PostCSS issue. |
+| Security install, `npm install next@16.4.1 eslint-config-next@16.4.1 eslint@^9` | **PASS**, exit 0 | `package.json` and `package-lock.json` updated consistently. |
+| Final `npm run lint` | **PASS**, exit 0 | ESLint flat config runs via the package script. |
+| Final `npx tsc --noEmit` | **PASS**, exit 0 | TypeScript check completed. |
+| First Next.js 16 build | **FAIL**, exit 1 | Found one remaining `setSeen` reference in the reset path; corrected to clear the ref. |
+| Final `npm run build` | **PASS**, exit 0 | Next.js 16.4.1/Turbopack compiled, type-checked, generated four static pages, and listed `/` and `/_not-found`. It updated `tsconfig.json` for Next.js (`jsx: react-jsx`, `target: ES2017`, and `.next/dev/types`). |
+| Production server start | **PASS** | Ran alone with `npm run start -- --hostname 127.0.0.1 --port 3001`; server became ready and was stopped after checks. |
+| HTTP `HEAD /` | **PASS**, 200 | Static homepage response, 14,252-byte HTML. |
+| HTTP `HEAD /_next/static/chunks/24mav24p0bjak.css` | **PASS**, 200 | CSS asset response, 13,280 bytes. |
+| HTTP `HEAD /favicon.ico` | **PASS**, 200 | Favicon response. |
+| HTTP `HEAD /recommendations` | **404 by design** | The prototype's recommendations, wizard, and insights are client-side views inside `/`, not separate URL routes. This is not counted as a missing route. |
+| Browser visual and interaction QA | **PASS (reported by Harish, 15 Oct)** | Overall manual Chrome QA reported passed. Specific flow details were not supplied; see 15 October update. Earlier headless-browser failures are historical. |
 
-- `.gitignore` excludes `node_modules`, `.next`, `out`, `build`, `.vercel`, environment files (except `.env.example`), and `*.pem`. It was tightened in this pass because the original rule excluded only `.env*.local`. No `.env` file appeared in the supplied inventory. This is a filesystem check, not a commit-history secret scan; there is no Git repository to inspect.
-- No GitHub commit, Vercel deployment, Google Sheet, Google Doc, Loom, public link, or final form submission was created or verified.
-- No ZIP was created because runtime checks and required local verification are incomplete. This preserves the distinct-archive requirement without presenting an unverified package as final.
+The Next.js 16 build emitted two non-fatal warnings: Turbopack ignored the parent `C:\Users\haris\package-lock.json` because it is outside the repository and suggested setting a Turbopack root; and React 18 support is deprecated in Next.js 16.4. These warnings did not prevent build or serve.
 
-## Commands and checks executed
+### Manual Chrome verification — status superseded 15 October 2026
 
-- Enumerated project files and read the package metadata, ignore rules, README, and submission documents.
-- `git status --short` — unavailable: current folder is not a Git repository.
-- Python `openpyxl` workbook inspection — completed; 7 sheets, 884 formulas, 0 cached error cells.
-- Independent Base-case cohort and ROI arithmetic — completed; results above.
-- Sensitivity base-cell cached checks — both `OK`.
-- `npm.cmd run lint` — blocked: `next` command missing because `node_modules` is absent.
-- `npm.cmd run build` — blocked: `next` command missing because `node_modules` is absent.
-- `npm.cmd ci` — failed inside npm (`Exit handler never called!`); npm could not write its log under the user cache. Partial generated dependencies were removed.
-- CSV output reconciliation — completed for selected key outputs and all Conservative/Base/Optimistic ROI rows; values match workbook cached outputs at displayed precision.
-- TypeScript type-check, dev server/browser QA, document render/page count — not run.
+Harish reports that manual Chrome QA passed overall. The specific flows checked were not enumerated in the update, so refer to the current checklist for the items that still need individual attribution.
 
-## Changes made
+## Product, assignment, and financial deliverables
 
-- Added this audit report and `final_submission_checklist.md`.
-- Tightened `.gitignore` to ignore environment files by default while allowing `.env.example`; saved the prior version at `submission/audit_backups/gitignore.before-audit`.
-- Did not change the prototype, workbook, CSV, solution, or existing screenshots because no reproducible defect was established in this pass.
+- **Prototype source:** present; it is a local simulated prototype using synthetic data, not a live Cheerio integration. Client-side product journey behavior still needs manual verification after the framework update.
+- **Solution document:** present. Its page count was not re-rendered in this environment; confirm it is at most four A4 pages.
+- **Financial workbook and CSV:** not modified. The previous independent workbook review recorded 7 sheets, 884 formulas, no cached Excel errors, Base single-cohort ROI about **-55.1%**, recurring-rollout ROI about **-46.9%**, monthly fully loaded cost **₹37,000**, and break-even at about **209 incremental retained account-months**. These are illustrative assumptions, not causal results. Recalculation after Google Sheets import remains outstanding.
+- **AI evidence:** `ai_usage_log.md` is an honest template; genuine prompt runs, links/screenshots, weak-prompt comparison, and personal reflection remain outstanding.
+- **Screenshots:** eight files exist. Their updated correspondence to the post-upgrade UI was not visually checked.
+- **Walkthrough:** `prototype_walkthrough.md` exists; record a 3–5 minute Loom after manual QA.
 
-## Remaining manual tasks
+## Git and publication
 
-1. Install dependencies and run lint, type-check, build, and browser QA; resolve any real defects.
-2. Reconcile the CSV against workbook outputs, recalculate the workbook in a spreadsheet engine, and check formulas after Google Sheets conversion.
-3. Re-render `solution.md` in the final document tool and confirm it is at most four A4 pages.
-4. Run the four suggested AI prompts, capture genuine outputs/screenshots/links, and complete personal reflection in `ai_usage_log.md`.
-5. Review assumptions and wording personally; retain all illustrative labels and distinguish feature adoption from causal retention impact.
-6. Select and verify three or four real prototype screenshots; record a 3–5 minute Loom.
-7. Create/recover the intended Git repository, inspect history for secrets, commit only reviewed files, then publish the prototype and verify the URL signed out.
-8. Upload the workbook to Google Sheets, inspect formulas and errors, configure viewer permissions on each artifact, verify links signed out, and submit the final form before 15 October 2026, 11:59 PM IST.
+`git status --short` is readable and shows the repository changes, but Git's index could not be refreshed because an earlier attempt to create `.git/index.lock` was denied. `attrib` shows `.git` is Hidden and `.git/index` is Archive, not Read-only. `icacls` shows the current Windows user has Full Control, but also shows inherited explicit deny entries for restricted service identities; the Codex workspace policy exposes `.git` as read-only. The observed failure is therefore consistent with the agent's workspace restriction, not a Read-only file attribute. I did not alter `.git` permissions, the index, or history.
 
-## Unresolved assumptions
+To refresh staging safely, open this same repository folder in your normal VS Code session and run `git status --short` in its integrated terminal. If no Git command is running and no active lock file exists, run `git add -A` and review `git diff --cached`. Do not delete an active `index.lock` or change `.git` ACLs to work around the managed workspace restriction.
 
-All product funnel, churn, price, margin, cost, pricing take-rate, and rollout inputs remain illustrative unless explicitly identified as supplied by the assignment. No Cheerio customer research, causal experiment, actual business financials, external model pricing verification, or deployment evidence was available in this audit.
+No GitHub push, Vercel deploy, Google Sheet/Doc creation, Loom publication, or final form submission occurred. No ZIP was created or refreshed. Keep the app unpublished until the announced 14 October security update is checked, all intended manual QA is complete, and you approve publishing.
+
+## Files changed in this remediation
+
+- `package.json`, `package-lock.json` — patched Next.js and matching lint dependencies; direct ESLint script.
+- `eslint.config.mjs` — Next.js flat ESLint config.
+- `.eslintrc.json` — removed as obsolete under the new config.
+- `components/App.tsx` — ref-backed impression tracking and reset to satisfy the stricter lint rule while preserving behavior.
+- `tsconfig.json` — Next.js 16 build updates listed above.
+- `submission/final_audit.md`, `submission/final_submission_checklist.md` — current evidence and outstanding steps.
+
+## Historical outstanding blockers (superseded by the 15 October update)
+
+1. **BLOCKED:** review the official 14 October Next.js upstream-dependency security release once published; rerun `npm audit` and `npm audit --omit=dev`.
+2. **BLOCKED:** complete browser-based journey, console/network, and mobile QA in Chrome; headless browser attempts failed.
+3. **NEEDS MY ACTION:** render `solution.md` and verify its page limit.
+4. **NEEDS MY ACTION:** recalculate the workbook and reconcile formulas after Google Sheets import.
+5. **NEEDS MY ACTION:** record real AI usage evidence, select current screenshots, and record the Loom.
+6. **NEEDS MY ACTION:** refresh Git staging in a normally writable workspace, inspect the final diff/history for secrets, then decide whether to publish to GitHub/Vercel and create/permission-check external deliverables.
+7. **NEEDS MY ACTION:** submit the final form by **15 October 2026, 11:59 PM IST**.
+
+## 14 October 2026 follow-up (verified this session)
+
+- Rechecked the [official Next.js announcement](https://nextjs.org/blog/upcoming-nextjs-security-update-october-2026) and the [maintainers’ GitHub advisory list](https://github.com/vercel/next.js/security/advisories). At 12:01 PM IST on 14 October, the blog still labels the two Critical / one High upstream-dependency update as **upcoming**. I could not verify a release or patched-version guidance for that announcement. This does not prove the update will not publish later today; recheck before deployment.
+- Fresh `npm audit` and `npm audit --omit=dev` attempts both failed because the npm registry audit endpoint was unreachable from this environment. No dependency changes were made. The last successful audit of this exact lockfile state, recorded above, found 9 dev-only findings and 0 production findings. Treat those as last-known results, not a fresh 14 October audit.
+- Fresh `npm ls next react react-dom postcss` passed: `next@16.4.1`, `react@18.3.1`, `react-dom@18.3.1`, Next's nested `postcss@8.5.23`, and project `postcss@8.5.29` (Tailwind tree dedupes to project PostCSS).
+- The existing production server is now running at `http://127.0.0.1:3001/`; a fresh HTTP HEAD returned 200 (14,252-byte HTML). This is not browser QA. Open it in normal Chrome and stop with Ctrl+C when done.
+- Visually inspected the eight existing screenshots. Best four journey examples: `01-dashboard-recommendation.png`, `02-details.png`, `03-configure.png`, `04-success.png`. They predate the framework upgrade and need matching against the current app before use; they are not fresh QA evidence. Optional failure/mobile support: `06-error-retry.png`, `07-mobile.png`.
+- The walkthrough now has concrete Git, GitHub, Vercel, Sheets, Docs, permission, signed-out-link, and submission steps. Nothing was pushed, deployed, shared, or submitted.
+- Prepared AI prompts are in `ai_usage_log.md`; they have not been run by Haris and no outputs or chat links are claimed. Workbook and CSV were left unchanged; the CSV labels inputs as illustrative. No spreadsheet-engine recalculation was performed. The solution page count remains unverified because no usable renderer is available here.
+
+### Current blockers and owner actions
+
+1. **BLOCKED:** npm registry unavailable for fresh audit; re-run both audit commands from a network-connected writable terminal. Recheck official patched guidance once it is published, and do not deploy until cleared.
+2. **NEEDS MY ACTION:** use Chrome at `http://127.0.0.1:3001/` and complete the checklist in `final_submission_checklist.md`; screenshots and Loom must follow that verification.
+3. **NEEDS MY ACTION:** render solution to A4 and confirm <=4 pages; import workbook to Sheets and verify formulas by recalculation.
+4. **NEEDS MY ACTION:** run prepared prompts, capture genuine AI evidence, then inspect screenshots, record Loom, review Git in normal writable VS Code, and approve any external publishing/submission.
+## 15 October 2026 readiness update
+
+**Results reported as verified by Harish:** installed Next.js is 16.4.1; `npm run lint`, `npx tsc --noEmit`, and `npm run build` passed; `npm audit --omit=dev` reported zero vulnerabilities; and full `npm audit` reported 9 development-dependency findings (7 high, 2 moderate). These commands were not rerun during this documentation-only update.
+
+**Manual Chrome QA: PASS at the overall level, per Harish.** The specific flows checked were not enumerated, so no individual journey, console/network, or mobile checklist item is marked verified here. Existing screenshots were inspected visually for their contents: the four suggested journey images are `01-dashboard-recommendation.png`, `02-details.png`, `03-configure.png`, and `04-success.png`; `05-insights.png`, `06-error-retry.png`, `07-mobile.png`, and `08-draft-saved.png` also exist. Inspection confirms what the images depict, not that they were captured from the current 16.4.1 build or that interactions work.
+
+### Remaining submission requirements
+
+- **NEEDS MY ACTION:** record which individual Chrome flows, responsive checks, console, and network checks were actually tested; mark only those individually. Recheck screenshot currency against the current app.
+- **NEEDS MY ACTION:** render `solution.md` in the final document tool and verify it is no more than four A4 pages; add/confirm final name and formatting.
+- **NEEDS MY ACTION:** import the unchanged workbook into Google Sheets, recalculate, inspect formulas/formatting and errors, and reconcile with the CSV.
+- **NEEDS MY ACTION:** run the prepared AI prompts, including the weak/improved pair; add only real outputs, links/screenshots, and personal reflection to the AI log.
+- **NEEDS MY ACTION:** record and review the 3–5 minute Loom after confirming its scenes match QA actually completed.
+- **NEEDS MY ACTION:** review/stage/commit the intended files in writable VS Code; Git index changes remain unavailable from this workspace. Push only after your approval.
+- **NEEDS MY ACTION:** verify the current official Next.js security guidance applicable to 16.4.1 before deployment; the audit results above are recorded as reported, not rerun here.
+- **NEEDS MY ACTION:** create/verify Google Sheets and document deliverables, set permitted viewer access, test links signed out, and submit the assignment before its stated deadline. No external action has been taken.
+- **PASS:** financial model assumptions and workbook were not changed; no AI outputs were fabricated; no ZIP, push, deployment, publication, or submission was made.

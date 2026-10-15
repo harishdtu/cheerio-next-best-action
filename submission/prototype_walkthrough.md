@@ -37,9 +37,11 @@ Real captures of the running prototype are in `submission/screenshots/`:
 | 07-mobile.png | 390 px wide layout |
 | 08-draft-saved.png | Draft saved, nothing live |
 
-**Suggested four for the submission:** 01, 03, 04 and 06 (or 05 if you prefer to show measurement). Check them yourself and recapture if you change the app. To recapture: run `npm run dev`, walk the path, and use the browser's capture tool.
+**Suggested four for the submission:** `01-dashboard-recommendation.png`, `02-details.png`, `03-configure.png`, and `04-success.png`. Together they show the recommendation, rationale and feature preview, setup, and simulated success. The screenshots were inspected visually on 15 October 2026. Harish reports overall manual Chrome QA passed, but did not enumerate individual flows. Confirm these screenshots match the current build before using them as evidence. Optional supporting evidence: `06-error-retry.png` (failure handling), `07-mobile.png` (390 px layout), or `05-insights.png` (synthetic measurement view). Do not represent old screenshots as a fresh interaction test. To recapture later, open the running app in Chrome and use its screenshot capture tool.
 
 ## Loom script (target 4 minutes)
+
+Record after manually checking the current app. This script is a speaking outline, not evidence that QA or any AI prompt has already been completed.
 
 | Time | Say and show |
 |---|---|
@@ -63,15 +65,37 @@ Real captures of the running prototype are in `submission/screenshots/`:
 
 Primary: feature activation rate among eligible exposed accounts; time from exposure to activation; day-30 retained active-account rate. North Star: weekly active accounts completing at least one meaningful non-campaign workflow. Proposed target: 20% relative improvement from a measured baseline (not a known baseline, not a promise).
 
-## How to publish (nothing below has been done)
+## Publication instructions (nothing below has been done)
 
-1. **Prototype on Vercel:** push the repo to GitHub, import it at vercel.com, accept the Next.js defaults, deploy. Open the URL in a private window and run the main path.
-2. **Google Sheet:** in Google Sheets choose File > Import > Upload `financial_model.xlsx`, create a new spreadsheet, then check each sheet for `#NAME?` or `#REF!` errors and that conditional formatting survived. Compare the base ROI with `financial_model.csv`.
-3. **Solution document:** paste `solution.md` into Google Docs (or export to PDF), and re-check it is within four pages.
-4. **Loom:** record 3–5 minutes using the script above.
-5. **Sharing:** set Google files and the Loom to "Anyone with the link can view". Test every link while signed out.
-6. **Submit** the links through the form the company supplied before 15 October 2026, 11:59 PM IST. Do not leave this to the last hour.
+Before deployment, verify the official security guidance applicable to installed Next.js 16.4.1, confirm the reported clean production audit, and obtain Harish approval. Overall manual Chrome QA is reported as passed; record specific checks accurately.
 
+### Open and review Git safely
+
+1. Open `C:\Users\haris\Downloads\cheerio-next-best-action` in your regular, writable VS Code session.
+2. In its integrated terminal run `git status --short`, `git diff --check`, `git diff`, and `git diff --cached`. Review every changed file and confirm no credentials, `.env` values, generated build files, or unrelated edits are included.
+3. When satisfied, stage with `git add -A`, then run `git diff --cached --check`, `git diff --cached --stat`, and `git diff --cached`. Stage only intended files; unstage accidental files with `git restore --staged <path>`. Commit only after reviewing the staged patch, for example `git commit -m "chore: finalize Cheerio assignment readiness"`.
+4. Do not delete `.git/index.lock` unless you have confirmed no Git process is running and the lock is stale. Do not reset or rewrite history to work around the current workspace restriction.
+
+### Push to GitHub after approval
+
+1. Decide repository visibility and create/select the intended GitHub repository.
+2. Check `git remote -v`; configure `origin` only if needed, using the approved repository URL.
+3. Confirm the branch and staged commit with `git status --short --branch` and `git log -1 --oneline`, then push the intended branch, e.g. `git push -u origin main`. Confirm the commit appears in GitHub.
+
+### Deploy to Vercel after security and QA pass
+
+1. Import the approved GitHub repository in Vercel and use the detected Next.js settings. This prototype has no required production secrets or external integrations.
+2. Deploy a preview first. Open it in a signed-out/private browser window and repeat the dashboard-to-success path, failure/retry, Insights, and mobile checks.
+3. Promote/deploy production only after the preview passes and you approve. Record the URL and recheck it signed out.
+
+### Create and verify assignment deliverables
+
+1. **Google Sheets:** In Sheets choose **File > Import > Upload**, select `financial_model.xlsx`, and import as a new spreadsheet. Check all seven sheets, formulas, number formats, and conditional formatting. Confirm there are no `#REF!`, `#VALUE!`, or `#NAME?` errors. Compare Base outputs to `financial_model.csv`; investigate discrepancies before sharing. Keep the source workbook unchanged.
+2. **Solution document:** Paste `solution.md` into Docs or export it to PDF. Set paper to A4 and confirm it is no more than four pages; add your name and inspect the final rendering.
+3. **AI evidence:** Run the prepared prompts yourself, save actual outputs and links/screenshots, compare the weak prompt with its improved version, and add your own reflection. Do not include fabricated outputs or links.
+4. **Screenshots and Loom:** Check screenshots against the current app. Record a 3–5 minute Loom only after Chrome QA; include the simulated-product and illustrative-model caveats in the script above.
+5. **Sharing:** Set each approved deliverable to **Anyone with the link — Viewer** only if that is permitted by your account and assignment rules. Open every link in a signed-out/private window and confirm it loads without edit access.
+6. **Submit:** Enter the verified prototype, Sheet, document, Loom, and any required AI evidence links in the company’s submission form by the assignment deadline (15 October 2026, 11:59 PM IST; confirm the form remains open). Save the confirmation.
 ## Final checklist
 
 - [ ] Prototype URL opens signed out and the main path completes

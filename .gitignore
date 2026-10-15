@@ -3,6 +3,8 @@
 # dependencies
 /node_modules
 /.npm-cache/
+/cheerio-product-intern-final.zip
+/submission/audit_backups/
 /.pnp
 .pnp.js
 .yarn/install-state.gz

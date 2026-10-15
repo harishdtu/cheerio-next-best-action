@@ -52,15 +52,15 @@
 - Local mock data and state only; refreshing resets everything. No backend, authentication or integration. No message is sent and no automation exists.
 - Only the abandoned-cart setup has a wizard; chatbot and segmentation open preview-only pages. "Not built" sidebar items are inert.
 - Insights combine a synthetic baseline with your session clicks.
-- Accessibility: keyboard use, labels, focus rings, a skip link, live regions and responsive layout were checked in Chromium by script and a partial visual review. Not done: screen reader testing, a formal contrast audit, other browsers. On first load focus moves to the main area, so the first Tab press skips the skip link.
+- Harish reports that overall manual Chrome QA passed. Specific flows and accessibility checks were not enumerated, so this does not establish keyboard, screen-reader, focus, live-region, or formal contrast results.
 - No usability testing with real users was done.
-- `npm install` reports dependency advisories from the default Next.js 14 scaffold; review before deploying beyond a demo.
+- Next.js was upgraded from 14.2.15 to 16.4.1 by 15 October 2026 after npm audit identified production PostCSS vulnerabilities with the prior patched line. Harish reports `npm audit --omit=dev` found zero vulnerabilities and full `npm audit` found nine development-dependency findings (seven high, two moderate). Verify the applicable official Next.js advisory guidance before deployment.
 
-## Verification performed in this pass
+## Verification record and limits
 
-- Workbook recalculated with LibreOffice: 884 formulas, 0 errors. Base ROI for both scenarios reproduced independently in Python (single cohort −55.1%, recurring −46.9%); both sensitivity grids tie to the model (check cells show OK); break-even take rate confirmed by recomputing Option C minus Option A at that rate (difference 0).
-- Solution document rendered from Markdown to A4 PDF in Chromium (10.5 pt, 18 mm margins): 4 pages with roughly half a page of headroom. Google Docs or Word layout may differ; recheck after pasting.
-- Prototype checks: see the final report for the commands run.
+- A previous workbook review recorded seven sheets, 884 formulas, no cached Excel error cells, cached sensitivity base checks marked OK, and independent Base ROI arithmetic of about -55.1% for the single cohort and -46.9% for recurring rollout. The workbook was not recalculated in a spreadsheet engine during this security pass; cached results do not prove formulas recalculate correctly after conversion.
+- A previous note states that `solution.md` rendered to four A4 pages. A document renderer was not available in this security pass, so the page count is not independently verified here. Recheck after pasting into the final document tool.
+- The final audit records the results reported by Harish for package version, lint, TypeScript, build, security audits, and overall manual Chrome QA. Individual Chrome flows were not enumerated. The workbook and CSV were not modified.
 
 ## Not created, and not claimed
 

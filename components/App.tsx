@@ -26,7 +26,7 @@ export default function App() {
   const [step, setStep] = useState<1 | 2>(1);
   const [config, setConfig] = useState({ templateId: "gentle", delay: 2, message: templates[0].body, quiet: true, cap: 1 });
   const [counters, setCounters] = useState(initialCounters);
-  const [seen, setSeen] = useState<RecId[]>([]);
+  const seen = useRef(new Set<RecId>());
   const [failNext, setFailNext] = useState(false);
   const [forceEmpty, setForceEmpty] = useState(false);
   const [submit, setSubmit] = useState<"idle" | "saving" | "error">("idle");
@@ -45,11 +45,11 @@ export default function App() {
 
   // Count an impression once per recommendation per session, when it is actually visible.
   useEffect(() => {
-    if (view === "dashboard" && !loading && next && !seen.includes(next.rec.id)) {
-      setSeen((s) => [...s, next.rec.id]);
+    if (view === "dashboard" && !loading && next && !seen.current.has(next.rec.id)) {
+      seen.current.add(next.rec.id);
       bump("impressions");
     }
-  }, [view, loading, next, seen]);
+  }, [view, loading, next]);
 
   useEffect(() => {
     mainRef.current?.focus();
@@ -82,7 +82,7 @@ export default function App() {
   const resetDemo = () => {
     setStatuses(initialStatuses());
     setCounters(initialCounters);
-    setSeen([]);
+    seen.current.clear();
     setFeedback([]);
     setOutcome(null);
     setSubmit("idle");
